@@ -1,0 +1,13 @@
+.board-container {
+    display: grid;
+    max-width: 470px;
+    margin: 0 auto;
+    grid-gap: 10px;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: repeat(3, 150px);
+}
+
+.board-container > div {
+    border: 1px #333 solid;
+    
+}
