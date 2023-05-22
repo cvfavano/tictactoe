@@ -6,37 +6,56 @@ const playerFactory = (name, sign) => {
     }
 }
 
-const gameBoard = () => {
-    let board = [[null,null,null],[null,null,null],[null,null,null]];
-    let enterMove = (e) => {
-        const divID = document.getElementById(e.target.id);
+const gameBoard = (() => {
+ 
+     let storeCell  = (obj) => {
+        console.log(obj)
+        if(obj != null){
+           
+            console.log(obj);
+            displayController.updateDisplay(obj.event);
+           
+             return gameManager.boardUpdate(obj)
+        }
 
+        else{
+             console.log('error')
+             return null;
+        }
+    }
+ 
+    let getCell = (e) => {
+       // const divID = document.getElementById(e.target.id);
+        console.log(e.target.id)
         const x = `${e.target.id.substring(0,1)}`;
+        console.log(x)
         const y = e.target.id.substring(1);
+        const obj = {arr:[x,y], event:e }
+        console.log(obj)
+      
+             gameBoard.storeCell(obj)
         
-        if(board[x][y] == null){
-            board[x][y] = player1['sign'];
-            console.log(player1['sign']);
-            console.log(board);
-            displayController().updateDisplay(e);
-        };
     }
+        
+    
     return {
-        board,
-        enterMove
+       // enterMove,
+        storeCell, 
+        getCell
     }
-}
+})()
+    
 
-const displayController = () => {
-    let array = gameBoard().board;
+const displayController = (() => {
   
     const spots = document.getElementsByClassName('box');
-    const updateBoard = () => {
+let result;
+  //  const spots = document.getElementsByClassName('box');
         for (let i = 0; i < spots.length; i++){
-            spots[i].addEventListener("click", gameBoard().enterMove);
+            spots[i].addEventListener("click", (e) => {
+                  result = gameBoard.getCell(e);
+            })
         }
-        
-    }
 //add player
     const updateDisplay = (e) => {
 
@@ -47,12 +66,32 @@ const displayController = () => {
 
     return{
        // array,
-       updateBoard ,
-       updateDisplay
+     //  addListener,
+       updateDisplay,
+       result
+       
     }
-};
+})()
+
+
+const gameManager = (() => {
+    let board = [[],[],[]];
+    
+        console.log(displayController.result);
+      
+    
+    let boardUpdate = (obj) => {
+        board[obj.arr[0]][obj.arr[1]] = player1.sign;
+        console.log(board)
+    }
+
+    return {
+        //publicMethod
+        boardUpdate
+ }
+  
+})()
 
 
 const player1 = playerFactory("christa","x");
-displayController().updateBoard();
 
