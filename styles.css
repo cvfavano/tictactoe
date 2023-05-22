@@ -1,13 +1,20 @@
+body {
+    font-family: sans-serif;
+}
+
 .board-container {
     display: grid;
     max-width: 470px;
-    margin: 0 auto;
+    margin: 20px auto;
     grid-gap: 10px;
     grid-template-columns: repeat(3, 150px);
     grid-template-rows: repeat(3, 150px);
+    background: #ccc;
+    font-size:100px;
 }
 
-.board-container > div {
-    border: 1px #333 solid;
-    
+.board-container > div.box {
+    background: #fff;
+    text-align: center;
+    font-size: 100px;
 }
