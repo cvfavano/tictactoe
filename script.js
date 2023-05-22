@@ -25,6 +25,19 @@ const gameManager = (() => {
         }
         
     }
+    let storeCell  = (obj) => {
+        console.log(obj)
+     
+        if(obj.arr != ''  ){
+            displayController.updateDisplay(obj.event);
+            return boardUpdate(obj)
+        }
+
+        else{
+            console.log('error')
+        }
+    }
+
     let boardUpdate = (obj) => {
         _board[obj.arr[0]][obj.arr[1]] = player1.sign;
         console.log(_board)
@@ -33,7 +46,7 @@ const gameManager = (() => {
     return {
        boardUpdate,
        getPlayer,
-       isTurn
+       storeCell
     }
 })()
 
@@ -50,21 +63,28 @@ const isWin = ((player, board)=>{
     ]
 })()
 
-const gameBoard = (() => {
- 
-     let storeCell  = (obj) => {
-        console.log(obj)
-     
-        if(obj.arr != ''  ){
-            displayController.updateDisplay(obj.event);
-            return gameManager.boardUpdate(obj)
-        }
 
-        else{
-            console.log('error')
-        }
+    
+
+const displayController = (() => {
+  
+    const spots = document.getElementsByClassName('box');
+
+    for (let i = 0; i < spots.length; i++){
+        spots[i].addEventListener("click", (e) => {
+              getCell(e);
+        })
     }
- 
+
+    const updateDisplay = (e) => {
+    
+        const player = gameManager.getPlayer();
+        const divID = document.getElementById(e.target.id);
+        const textNode = document.createTextNode(player['sign']);
+        divID.appendChild(textNode);
+    }
+
+
     let checkCell = (e) => {
         const divID = document.getElementById(e.target.id);
         
@@ -75,43 +95,17 @@ const gameBoard = (() => {
         return true
     }
 
-    let getCell = (e) => {
+    function getCell(e){
         const x = e.target.id.substring(0,1);
         const y = e.target.id.substring(1);
         const obj = {arr:[x,y], event:e }
         const cellStatus = checkCell(e);
         
         if(cellStatus) {
-            return gameBoard.storeCell(obj)
+            return gameManager.storeCell(obj)
         }
         
         console.log('error')  
-    }
-        
-    
-    return {
-        storeCell, 
-        getCell
-    }
-})()
-    
-
-const displayController = (() => {
-  
-    const spots = document.getElementsByClassName('box');
-
-    for (let i = 0; i < spots.length; i++){
-        spots[i].addEventListener("click", (e) => {
-              gameBoard.getCell(e);
-        })
-    }
-
-    const updateDisplay = (e) => {
-    
-        const player = gameManager.getPlayer();
-        const divID = document.getElementById(e.target.id);
-        const textNode = document.createTextNode(player['sign']);
-        divID.appendChild(textNode);
     }
 
     return{
