@@ -9,7 +9,7 @@ body {
     grid-gap: 10px;
     grid-template-columns: repeat(3, 150px);
     grid-template-rows: repeat(3, 150px);
-    background: #ccc;
+    background: #4169e1;
     font-size:100px;
 }
 
