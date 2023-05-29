@@ -9,9 +9,8 @@ const playerFactory = (name, sign) => {
 const player1 = playerFactory("christa","x");
 const player2 = playerFactory("jordan","o");
 
-
 const gameManager = (() => {
-    let _board = [[],[],[]];
+   
     let isTurn;
     let getPlayer = ( ) => {
 
@@ -20,45 +19,8 @@ const gameManager = (() => {
         
         else 
           return   isTurn = player2;
-        
-        
     }
-    let storeCell  = (obj) => {
-     //   console.log(obj)
-     
-        if(obj.arr != ''  ){
-            displayController.updateDisplay(obj.event);
-            return boardUpdate(obj)
-        }
-
-        else{
-            console.log('error')
-        }
-    }
-
-    let boardUpdate = (obj) => {
-  
-        _board[obj.arr[0]][obj.arr[1]] = isTurn.sign;
- 
-
-        findWin(winningCombinations, _board, isTurn.sign);
-
-        
-    }
-
-
-
-
-    const winningCombinations = [
-        ['00','01','02'],
-        ['10','11','12'],
-        ['20','21','22'],
-        ['00','11','22'], //diagonal
-        ['02','11','20'], //diagonal
-        ['00','10','20'], //vertical
-        ['01','11','21'], //vertical
-        ['02','21','12' ]  //vertical
-    ]
+   
 
 
     function findWin(comboArray, boardArray, sign) {
@@ -66,7 +28,7 @@ const gameManager = (() => {
         comboArray.forEach( (combo) => {
           for(let i = 0; i < combo.length; i++){
 
-
+                //split string to find row/column pair in 2d array
                 if (boardArray[combo[0].substring(0,1)][combo[0].substring(1)] === sign &&
                     boardArray[combo[1].substring(0,1)][combo[1].substring(1)] === sign &&
                     boardArray[combo[2].substring(0,1)][combo[2].substring(1)] === sign){
@@ -75,23 +37,57 @@ const gameManager = (() => {
                         displayController.stopUpdate();
                         displayController.changeColor(combo);
                      
-                        return true;
-                              
-
+                        return true;         
                 }
             }
         })
     }
 
     return {
-       boardUpdate,
        getPlayer,
-       storeCell,
-       findWin
+       findWin, 
+    
     }
 })()
 
-
+const board = (() => {
+    let _board = [[],[],[]];
+    const winningCombinations = [
+        ['00','01','02'],
+        ['10','11','12'],
+        ['20','21','22'],
+        ['00','11','22'], //diagonal
+        ['02','11','20'], //diagonal
+        ['00','10','20'], //vertical
+        ['01','11','21'], //vertical
+        ['02','21','12' ] //vertical
+    ]
+    let storeCell  = (obj) => {
+        //   console.log(obj)
+        
+           if(obj.arr != ''  ){
+               displayController.updateDisplay(obj.event);
+               return boardUpdate(obj)
+           }
+   
+           else{
+               console.log('error')
+           }
+       }
+   
+       let boardUpdate = (obj) => {
+             
+            let currentSign = gameManager.getPlayer().sign
+           _board[obj.arr[0]][obj.arr[1]] = currentSign;
+   
+           gameManager.findWin(winningCombinations, _board,currentSign);
+           gameManager.getPlayer();
+       }
+    return {
+        boardUpdate,
+        storeCell
+    }   
+})()
     
 
 const displayController = (() => {
@@ -134,7 +130,7 @@ const displayController = (() => {
         const cellStatus = checkCell(e);
         
         if(cellStatus) {
-            return gameManager.storeCell(obj)
+            return board.storeCell(obj)
         }
         
         console.log('error')  
