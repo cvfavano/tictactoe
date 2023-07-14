@@ -21,7 +21,15 @@
          <!-- Modal content -->
             <div class="modal-content">
                 <span class="close">&times;</span>
-                    <p>Some text in the Modal..</p>
+                <form id="form" method="post">
+                    <label for ="player1">Player1: <span class="invalid-player1 invalid">Please enter name</span></label>
+                    <input type="text" id ="player1" name="player1" required></input>
+
+                    <label for ="player2">player2: <span class="invalid-player2 invalid">Please enter name</span></label>
+                    <input type="text" id="player2" name="player2"></input>
+
+                    <button type="button" id="submit-button">submit</button>
+                </form>
             </div>
         </div>
     </div>
