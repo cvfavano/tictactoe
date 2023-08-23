@@ -1,13 +1,32 @@
-const playerFactory = (name, sign) => {
-    return {
-    name,
-    sign
-    }
-}
+const usersModel = (() => {
 
-const board = (() => {
-    let _board = [[],[],[]];
-    const winningCombinations = [
+    let _p1;
+    let _p2;
+
+    let playerFactory = ( name, sign) => {
+        if (_p1 == undefined) {
+            _p1 = {name,sign}
+            return _p1;
+        } 
+        else{ 
+            _p2 = {name, sign}
+            return _p2;
+        }
+    }
+
+    let players = () =>
+    {
+        return {
+            _p1,_p2
+        } 
+    }
+    return {
+        playerFactory,
+        players
+    }
+})()
+
+ const winningCombinations = [
         ['00','01','02'],
         ['10','11','12'],
         ['20','21','22'],
@@ -17,6 +36,9 @@ const board = (() => {
         ['01','11','21'], //vertical
         ['02','21','12' ] //vertical
     ]
+const board = () => {
+    let _board = [[],[],[]];
+   
     let storeCell  = (obj) => {
         
            if(obj.arr != ''  ){
@@ -30,7 +52,7 @@ const board = (() => {
        }
    
        let boardUpdate = (obj) => {   
-            let currentSign = gameManager().getPlayer().sign
+            let currentSign = gameManager.getPlayer().sign
            _board[obj.arr[0]][obj.arr[1]] = currentSign;
          
        }
@@ -40,23 +62,31 @@ const board = (() => {
          return _board;
        }
 
+       let currentBoard = () => {
+        return _board;
+       }
+
 
     return {
         boardUpdate,
         storeCell, 
-        clearBoard
+        clearBoard, 
+        currentBoard
     }   
 }    
-)()
+
 
 const displayController = (() => {
-  
-    const markBoard = () => {
+let players;
+    const markBoardwithTurn = () => {
   
         const spots = document.getElementsByClassName('box');
 
         for (let i = 0; i < spots.length; i++){
-            spots[i].addEventListener("click", getCell);
+            spots[i].addEventListener("click", (e) =>{
+                getCell(e);
+                updateDisplay(e);
+            })
         }
     }
 
@@ -69,13 +99,21 @@ const displayController = (() => {
     }
 
     //uses game manager player
-    const updateDisplay = (e) => {
-        const player = gameManager().getPlayer();
-        const divID = document.getElementById(e.target.id);
-        const textNode = document.createTextNode(player['sign']);
+    const updateDisplay = (event) => {
+        console.log(event )
+        const player = gameManager.getPlayer();
+        
+        // !!!!
+        //fix this its taking in submit button id
+        
+        const divID = document.getElementById(event.target.id);
+       // console.log(player[sign]);
+        console.log(player.sign);
+        const textNode = document.createTextNode(player.sign);
+   //     players[player]['sign']
+   console.log(textNode)
         divID.appendChild(textNode);
     }
-
 
     let checkCell = (e) => {
         const divID = document.getElementById(e.target.id);
@@ -94,7 +132,7 @@ const displayController = (() => {
         const cellStatus = checkCell(e);
     
         if(cellStatus) {
-            return board.storeCell(obj)
+            return board().storeCell(obj)
         }
         
         console.log('error')  
@@ -111,16 +149,11 @@ const displayController = (() => {
     
 
     let checkForm = (player, num) =>  {
-            if (player === '' ) {
-                toggleValidation(num, true);
-                return false;
-            }
-          
-        else {
-       
-            return true;
+        if (player === '' ) {
+            toggleValidation(num, true);
+            return false;
         }
-    
+        return true;    
     }
           
     function toggleValidation(playerNum, displayStatus){
@@ -141,133 +174,172 @@ const displayController = (() => {
         const exitButton = document.querySelector('.close');
 
         button.addEventListener('click', () => {
-                modal.style.display = 'block';
+            modal.style.display = 'block';
               
-            });
+        });
         
         exitButton.addEventListener('click', () => {
-                modal.style.display = 'none';
+            modal.style.display = 'none';
            
-            });
+        });
     }
-    let formData = () => {
-        // const button = document.querySelector('#submit-button');
-
-        // button.addEventListener('click', (event) => {
-        //     event.preventDefault();
-            const form = document.querySelector('#form');
-            const formData = new FormData(form ); 
     
-            let player1 = formData.get('player1');
-            let player2 = formData.get('player2');
+    let formData = () => {
 
-            if(!checkForm(player1,1) || 
-            !checkForm(player2,2)){
-                return
-            }
-            const p1= playerFactory(player1, "x");
-            const p2 = playerFactory(player2, "o");
-            
-           
+        const form = document.querySelector('#form');
+        const formData = new FormData(form ); 
+    
+        let player1 = formData.get('player1');
+        let player2 = formData.get('player2');
+
+        if(!checkForm(player1) || !checkForm(player2)){
+            return
+        }
+
+        let p1 = usersModel.playerFactory(player1, "x");
+        let p2 = usersModel.playerFactory(player2, "o");
+        usersModel.players(p1,p2);
            
         const modals = document.querySelector('#modal-container');  
         modals.style.display ='none';
-       
-            return { 
-                p1, p2     
-            };
-            
-           // gameManager(players);
-
-
-    // })
-
     }
+
     return{
        updateDisplay,
        stopUpdate,
        changeColor,
-       markBoard,
+       markBoardwithTurn,
        formData, 
-       toggleModal
+       toggleModal,
+       getCell
     }
 
 
 })()
 
-const gameManager = () => {
-    displayController.toggleModal();
-    let isTurn;
-    let players;
-    let changeTurn = (personObject ) => {
+const gameManager = (() => {
+let currentPlayer;
+  //  let isWin;
 
-        if(isTurn == personObject.p1  || isTurn == null)
-            return isTurn = personObject.p1;
+    // let changeTurn = ( ) => {
+
+    //     if(players != undefined) {
+    //     if(currentPlayer == players.p1  || currentPlayer == null)
+    //         return currentPlayer = players.p1;
         
-        else 
-          return   isTurn = personObject.p2;
+    //     else 
+    //       return   isTurn = players.p2;
+
+    //     }
+    // }
+
+    let getPlayer = () => {
+        if(currentPlayer == undefined || currentPlayer != usersModel.players._p2 ){
+            //console.log(usersModel.players()._p1)
+            currentPlayer = usersModel.players()._p1;
+        
+            return  currentPlayer;
+        }
+    
+        else {
+            currentPlayer = usersModel.players._p2;
+          //  console.log(currentPlayer)
+            return   currentPlayer;
+        }
+   
     }
    
-    let getPlayer = (personObject) => {
-        if(isTurn == null || isTurn != personObject.p2 )
-                return isTurn = personObject.p1;
+
+
+
+    let  findWin = (comboArray, boardArray) => {
     
-        else 
-            return   isTurn = personObject.p2; 
-    }
-    const button = document.querySelector('#submit-button');
-
-    button.addEventListener('click', (event) => {
-            event.preventDefault();
-    
-              players = displayController.formData();
-  
-            console.log('here')
-            console.log(players)
-
-    displayController.markBoard();
-
-
-   
-
-    let isWin  =  function findWin(comboArray, boardArray, sign) {
-      
+        let currentPlayer = getPlayer();
         comboArray.forEach( (combo) => {
           for(let i = 0; i < combo.length; i++){
 
                 //split string to find row/column pair in 2d array
-                if (boardArray[combo[0].substring(0,1)][combo[0].substring(1)] === sign &&
-                    boardArray[combo[1].substring(0,1)][combo[1].substring(1)] === sign &&
-                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] === sign){
+                if (boardArray[combo[0].substring(0,1)][combo[0].substring(1)] === currentPlayer.sign &&
+                    boardArray[combo[1].substring(0,1)][combo[1].substring(1)] === currentPlayer.sign &&
+                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] === sign &&
+                    boardArray[combo[0].substring(0,1)][combo[0].substring(1)] != currentPlayer.null &&
+                    boardArray[combo[1].substring(0,1)][combo[1].substring(1)] != null &&
+                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] != null) {
                         
-                        console.log('WIN ' + getPlayer().name)  ;
-                        displayController.stopUpdate();
-                        displayController.changeColor(combo);
-                     
-                        return true;         
+                       
+                                         
+                        return true;   
                 }
+
+                else {
+                    return false 
+                }
+               
             }
+             
         })
+       
     };
 
-    
-
-    do{
-        changeTurn(players);
-        getPlayer(players);
-       
-    } while(isWin == false)
-
   
-    })
+
+
+    
 
     return {
         getPlayer,
-   
-      changeTurn
+        // changeTurn, 
+        findWin
     
     }
+})()
+
+const playGame = () => {
+    let player;
+    let isWin = false;
+    displayController.toggleModal();
+  //  let names;
+    let players;
+    const button = document.querySelector('#submit-button');
+
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+    
+        displayController.formData();
+           
+        usersModel.players();
+        addTurntoBoard();
+        
+    })
+
+    function addTurntoBoard() {
+        const spots = document.getElementsByClassName('box');
+
+        for (let i = 0; i < spots.length; i++){
+            spots[i].addEventListener("click",(event) => {
+                displayController.getCell(event);
+                checkWin();
+            })
+        }
+    }
+    function checkWin(){
+        displayController.markBoardwithTurn();
+        displayController.updateDisplay();
+        let currentBoard = board().currentBoard;
+        isWin = gameManager.findWin(winningCombinations,currentBoard);
+
+        if(isWin) {
+            console.log('WIN ' + currentPlayer)  ;
+            displayController.stopUpdate();
+            displayController.changeColor(combo);
+            console.log('win')
+        }
+        else{
+            player = gameManager.getPlayer();
+            gameManager.changeTurn(); //fix this
+            findWinner();
+        }
+    } 
 }
 
-
-gameManager();
+playGame();
