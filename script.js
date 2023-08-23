@@ -118,8 +118,9 @@ let players;
     }
 
     function getCell(e){
-        const x = e.target.id.substring(0,1);
-        const y = e.target.id.substring(1);
+        const x = e.target.id.substring(5,6);
+        const y = e.target.id.substring(6);
+        console.log({x,y})
         const obj = {arr:[x,y], event:e }
         const cellStatus = checkCell(e);
     
