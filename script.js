@@ -85,7 +85,7 @@ let players;
         for (let i = 0; i < spots.length; i++){
             spots[i].addEventListener("click", (e) =>{
                 getCell(e);
-                updateDisplay(e);
+             //   updateDisplay(e);
             })
         }
     }
@@ -99,19 +99,11 @@ let players;
     }
 
     //uses game manager player
-    const updateDisplay = (event) => {
-        console.log(event )
-        const player = gameManager.getPlayer();
-        
-        // !!!!
-        //fix this its taking in submit button id
-        
-        const divID = document.getElementById(event.target.id);
-       // console.log(player[sign]);
-        console.log(player.sign);
+    const updateDisplay = (e) => {
+        console.log(e )
+        const player = gameManager.getPlayer();  
+        const divID = document.querySelector(`div#${e.target.id}`);
         const textNode = document.createTextNode(player.sign);
-   //     players[player]['sign']
-   console.log(textNode)
         divID.appendChild(textNode);
     }
 
@@ -221,17 +213,17 @@ const gameManager = (() => {
 let currentPlayer;
   //  let isWin;
 
-    // let changeTurn = ( ) => {
+    let changeTurn = ( ) => {
 
-    //     if(players != undefined) {
-    //     if(currentPlayer == players.p1  || currentPlayer == null)
-    //         return currentPlayer = players.p1;
+        if(players != undefined) {
+        if(currentPlayer == players.p1  || currentPlayer == null)
+            return currentPlayer = players.p1;
         
-    //     else 
-    //       return   isTurn = players.p2;
+        else 
+          return   isTurn = players.p2;
 
-    //     }
-    // }
+        }
+    }
 
     let getPlayer = () => {
         if(currentPlayer == undefined || currentPlayer != usersModel.players._p2 ){
@@ -255,6 +247,7 @@ let currentPlayer;
     let  findWin = (comboArray, boardArray) => {
     
         let currentPlayer = getPlayer();
+        console.log(currentPlayer)
         comboArray.forEach( (combo) => {
           for(let i = 0; i < combo.length; i++){
 
@@ -288,7 +281,7 @@ let currentPlayer;
 
     return {
         getPlayer,
-        // changeTurn, 
+        changeTurn, 
         findWin
     
     }
@@ -298,8 +291,7 @@ const playGame = () => {
     let player;
     let isWin = false;
     displayController.toggleModal();
-  //  let names;
-    let players;
+
     const button = document.querySelector('#submit-button');
 
     button.addEventListener('click', (event) => {
@@ -324,7 +316,6 @@ const playGame = () => {
     }
     function checkWin(){
         displayController.markBoardwithTurn();
-        displayController.updateDisplay();
         let currentBoard = board().currentBoard;
         isWin = gameManager.findWin(winningCombinations,currentBoard);
 
