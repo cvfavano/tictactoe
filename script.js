@@ -36,13 +36,12 @@ const usersModel = (() => {
         ['01','11','21'], //vertical
         ['02','21','12' ] //vertical
     ]
-const board = () => {
+const board = (() => {
     let _board = [[],[],[]];
    
     let storeCell  = (obj) => {
         
            if(obj.arr != ''  ){
-               displayController.updateDisplay(obj.event);
                return boardUpdate(obj)
             }
    
@@ -52,18 +51,23 @@ const board = () => {
        }
    
        let boardUpdate = (obj) => {   
-            let currentSign = gameManager.getPlayer().sign
-           _board[obj.arr[0]][obj.arr[1]] = currentSign;
+            let turnNum = playGame.currentTurnNum();
+            let currentTurnPlayer = gameManager.currentTurn(turnNum);
+console.log({turnNum})
+            console.log({currentTurnPlayer});
+            let currentSign = currentTurnPlayer.sign;
+            console.log({currentSign});
+            _board[obj.arr[0]][obj.arr[1]] = currentSign;
          
        }
 
        let clearBoard = () => {
-         _board = [[],[],[]];
-         return _board;
+            _board = [[],[],[]];
+            return _board;
        }
 
        let currentBoard = () => {
-        return _board;
+            return _board;
        }
 
 
@@ -73,22 +77,11 @@ const board = () => {
         clearBoard, 
         currentBoard
     }   
-}    
+}    )()
 
 
 const displayController = (() => {
-let players;
-    const markBoardwithTurn = () => {
-  
-        const spots = document.getElementsByClassName('box');
 
-        for (let i = 0; i < spots.length; i++){
-            spots[i].addEventListener("click", (e) =>{
-                getCell(e);
-             //   updateDisplay(e);
-            })
-        }
-    }
 
     const stopUpdate = () => {
         const spots = document.getElementsByClassName('box');
@@ -98,10 +91,12 @@ let players;
         }
     }
 
-    //uses game manager player
     const updateDisplay = (e) => {
-        console.log(e )
-        const player = gameManager.getPlayer();  
+  
+        let termNumber = playGame.currentTurnNum();
+
+        const player = gameManager.currentTurn(termNumber);  
+       console.log({e})
         const divID = document.querySelector(`div#${e.target.id}`);
         const textNode = document.createTextNode(player.sign);
         divID.appendChild(textNode);
@@ -125,7 +120,7 @@ let players;
         const cellStatus = checkCell(e);
     
         if(cellStatus) {
-            return board().storeCell(obj)
+            return board.storeCell(obj);
         }
         
         console.log('error')  
@@ -201,7 +196,7 @@ let players;
        updateDisplay,
        stopUpdate,
        changeColor,
-       markBoardwithTurn,
+    //    markBoardwithTurn,
        formData, 
        toggleModal,
        getCell
@@ -211,54 +206,58 @@ let players;
 })()
 
 const gameManager = (() => {
-let currentPlayer;
-  //  let isWin;
-
-    let changeTurn = ( ) => {
-
-        if(players != undefined) {
-        if(currentPlayer == players.p1  || currentPlayer == null)
-            return currentPlayer = players.p1;
-        
-        else 
-          return   isTurn = players.p2;
-
-        }
-    }
-
-    let getPlayer = () => {
-        if(currentPlayer == undefined || currentPlayer != usersModel.players._p2 ){
-            //console.log(usersModel.players()._p1)
-            currentPlayer = usersModel.players()._p1;
-        
-            return  currentPlayer;
-        }
+    let _currentPlayer;
     
-        else {
-            currentPlayer = usersModel.players._p2;
-          //  console.log(currentPlayer)
-            return   currentPlayer;
+
+   
+    let changeTurn = (termNum ) => {
+        const users = usersModel.players();
+        console.log({users})
+
+        // if divisible by 2, then currentPlayer is p2. Change player to p1
+        if(termNum % 2 != 0){
+             _currentPlayer = users._p2;
+             return _currentPlayer;
         }
-   
+        
+        else{ 
+             _currentPlayer = users._p1;
+             return _currentPlayer;
+        }
+        
     }
+
+  
+   let currentTurn = () => {
+ //   console.log({users})
+ const users = usersModel.players();
+    let termNum = playGame.currentTurnNum();
+    if(termNum % 2 != 0){
+       
+        return users._p1;
+   }
    
+   else{ 
+        return users._p2;
+   }
+}
 
 
 
     let  findWin = (comboArray, boardArray) => {
-    
-        let currentPlayer = getPlayer();
-        console.log(currentPlayer)
+    let currentPlayer = currentTurn();
+      //  let currentPlayer = gameManager.currentTurn();
+     //   console.log(_currentPlayer)
         comboArray.forEach( (combo) => {
           for(let i = 0; i < combo.length; i++){
 
                 //split string to find row/column pair in 2d array
                 if (boardArray[combo[0].substring(0,1)][combo[0].substring(1)] === currentPlayer.sign &&
                     boardArray[combo[1].substring(0,1)][combo[1].substring(1)] === currentPlayer.sign &&
-                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] === sign &&
-                    boardArray[combo[0].substring(0,1)][combo[0].substring(1)] != currentPlayer.null &&
-                    boardArray[combo[1].substring(0,1)][combo[1].substring(1)] != null &&
-                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] != null) {
+                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] === currentPlayer.sign &&
+                    boardArray[combo[0].substring(0,1)][combo[0].substring(1)] != currentPlayer &&
+                    boardArray[combo[1].substring(0,1)][combo[1].substring(1)] != currentPlayer &&
+                    boardArray[combo[2].substring(0,1)][combo[2].substring(1)] != currentPlayer) {
                         
                        
                                          
@@ -275,32 +274,40 @@ let currentPlayer;
        
     };
 
-  
+ 
 
 
     
 
     return {
-        getPlayer,
+      //  getPlayer,
         changeTurn, 
-        findWin
+        findWin, 
+        currentTurn
     
     }
 })()
 
-const playGame = () => {
+const playGame = (() => {
     let player;
     let isWin = false;
     displayController.toggleModal();
+    let opponents;
+    let _termNum = 1;
+    console.log({a_:_termNum});
 
+    let currentTurnNum = () => {
+
+        return _termNum
+    }
     const button = document.querySelector('#submit-button');
 
     button.addEventListener('click', (event) => {
         event.preventDefault();
     
         displayController.formData();
-           
-        usersModel.players();
+        opponents = usersModel.players();
+        //console.log()
         addTurntoBoard();
         
     })
@@ -308,18 +315,41 @@ const playGame = () => {
     function addTurntoBoard() {
         const spots = document.getElementsByClassName('box');
 
-        for (let i = 0; i < spots.length; i++){
-            spots[i].addEventListener("click",(event) => {
-                displayController.getCell(event);
-                checkWin();
-            })
-        }
-    }
-    function checkWin(){
-        displayController.markBoardwithTurn();
-        let currentBoard = board().currentBoard;
-        isWin = gameManager.findWin(winningCombinations,currentBoard);
+       
 
+            for (let i = 0; i < spots.length; i++){
+                spots[i].addEventListener("click",(e) => {
+console.log({e});
+                    logTurn(e) 
+                }
+                    
+                ,
+                {once: true })
+               
+            } 
+            
+            
+        }
+        function logTurn(e) {
+            console.log({e})
+            displayController.getCell(e);
+            displayController.updateDisplay(e);
+            if(_termNum > 4) {
+                checkWin()
+            }
+        _termNum++;
+        }
+       
+        console.log({_termNum})
+        
+    
+    function checkWin(){
+        // displayController.markBoardwithTurn();
+        let currentBoard = board.currentBoard();
+        isWin = gameManager.findWin(winningCombinations,currentBoard);
+    
+        
+        
         if(isWin) {
             console.log('WIN ' + currentPlayer)  ;
             displayController.stopUpdate();
@@ -327,11 +357,19 @@ const playGame = () => {
             console.log('win')
         }
         else{
-            player = gameManager.getPlayer();
-            gameManager.changeTurn(); //fix this
-            findWinner();
+       //     player = gameManager.getPlayer(opponents);
+      
+                
+          //  gameManager.changeTurn(_termNum); //fix this
+            
+            console.log('no win')
+            console.log(gameManager.currentTurn(_termNum));
+           addTurntoBoard();
+         //  _termNum++;
         }
     } 
-}
+    return{
+        currentTurnNum
+    }
+})()  
 
-playGame();
