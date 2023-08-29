@@ -98,6 +98,14 @@ const displayController = (() => {
         divID.appendChild(textNode);
     }
 
+    const clearDisplay = () => {
+        const spots = [...document.querySelectorAll('.box')];
+        spots.forEach(spot => { 
+             const divID = `#${spot.id}`;
+                document.querySelector(divID).textContent ='';
+        })
+    }
+
     let checkCell = (e) => {
         const divID = document.getElementById(e.target.id);
         
@@ -125,11 +133,8 @@ const displayController = (() => {
     function changeColor(winningArray){
         winningArray.forEach((combo) => {
             document.getElementById(`space${combo}`).style.color = 'green';
-
         })
     }
-
-    
 
     let checkForm = (player, num) =>  {
         if (player === '' ) {
@@ -186,17 +191,19 @@ const displayController = (() => {
         const modals = document.querySelector('#modal-container');  
         modals.style.display ='none';
     }
-    function resetGame(boardObj) {
+
+    
+
+    function resetGame() {
         const button = document.querySelector('#reset');
         let formPlayers = document.querySelectorAll('#form input');
         console.log({formPlayers})
         button.addEventListener('click', (e) => {
-           console.log( board.currentBoard());
           board.clearBoard();
-          console.log(board.currentBoard());
-            [...formPlayers].forEach((player) => {
-                player ='';
-            });
+          clearDisplay();
+            // [...formPlayers].forEach((player) => {
+            //     player ='';
+            // });
         })
     }
     return{
@@ -272,7 +279,6 @@ const playGame = (() => {
     displayController.toggleModal();
 
     displayController.resetGame(board.currentBoard());
-    console.log(board.currentBoard());
     
     let _termNum = 1;
 
@@ -316,7 +322,6 @@ const playGame = (() => {
         let endGame = gameManager.findWin(currentBoard);
  
         if(!endGame) {
-            console.log(gameManager.currentTurn(_termNum));
            addTurnToBoard(); 
         }
         else{ 
