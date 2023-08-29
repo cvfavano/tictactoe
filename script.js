@@ -35,40 +35,39 @@ const usersModel = (() => {
         ['00','10','20'], //vertical
         ['01','11','21'], //vertical
         ['02','21','12' ] //vertical
-    ]
-    const board = (() => {
-        let _board = [[],[],[]];
-   
-        let storeCell  = (obj) => {
+]
+const board = (() => {
+    let _board = [[],[],[]];
+
+    let storeCell  = (obj) => {
+    
+        if(obj.arr != ''  ){
+            return boardUpdate(obj)
+        }
+
+        else{
+            console.log('error')
+        }
+    }
+
+    let boardUpdate = (obj) => {   
+        let turnNum = playGame.currentTurnNum();
+        let currentTurnPlayer = gameManager.currentTurn(turnNum);
         
-           if(obj.arr != ''  ){
-               return boardUpdate(obj)
-            }
-   
-           else{
-               console.log('error')
-            }
-       }
-   
-       let boardUpdate = (obj) => {   
-            let turnNum = playGame.currentTurnNum();
-            let currentTurnPlayer = gameManager.currentTurn(turnNum);
-            
-            let currentSign = currentTurnPlayer.sign;
-            
-            _board[obj.arr[0]][obj.arr[1]] = currentSign;
-         
-       }
+        let currentSign = currentTurnPlayer.sign;
+        
+        _board[obj.arr[0]][obj.arr[1]] = currentSign;
+        
+    }
 
-       let clearBoard = () => {
-            _board = [[],[],[]];
-            return _board;
-       }
+    let clearBoard = () => {
+        _board = [[],[],[]];
+        return _board;
+    }
 
-       let currentBoard = () => {
-            return _board;
-       }
-
+    let currentBoard = () => {
+        return _board;
+    }
 
     return {
         boardUpdate,
@@ -85,7 +84,6 @@ const displayController = (() => {
 
         for (let i = 0; i < spots.length; i++){
             spots[i].removeEventListener("click",playGame.turnPlay, playGame.once);
-            
         }
     }
    
@@ -125,7 +123,6 @@ const displayController = (() => {
     }
 
     function changeColor(winningArray){
-
         winningArray.forEach((combo) => {
             document.getElementById(`space${combo}`).style.color = 'green';
 
@@ -189,14 +186,27 @@ const displayController = (() => {
         const modals = document.querySelector('#modal-container');  
         modals.style.display ='none';
     }
-
+    function resetGame(boardObj) {
+        const button = document.querySelector('#reset');
+        let formPlayers = document.querySelectorAll('#form input');
+        console.log({formPlayers})
+        button.addEventListener('click', (e) => {
+           console.log( board.currentBoard());
+          board.clearBoard();
+          console.log(board.currentBoard());
+            [...formPlayers].forEach((player) => {
+                player ='';
+            });
+        })
+    }
     return{
        updateDisplay,
        stopUpdate,
        changeColor,
        formData, 
        toggleModal,
-       getCell
+       getCell,
+       resetGame
     }
 })()
 
@@ -243,7 +253,6 @@ const gameManager = (() => {
                 if (boardArray[combo[0].substring(0,1)][combo[0].substring(1)] == currentPlayer.sign &&
                     boardArray[combo[1].substring(0,1)][combo[1].substring(1)] == currentPlayer.sign &&
                     boardArray[combo[2].substring(0,1)][combo[2].substring(1)] == currentPlayer.sign) {
-                    //displayController.stopUpdate();
                     displayController.changeColor(combo);
                     
                    endGame = true;
@@ -253,7 +262,6 @@ const gameManager = (() => {
         return endGame;
     };
     return {
-      //  getPlayer,
         changeTurn, 
         findWin, 
         currentTurn
@@ -261,10 +269,11 @@ const gameManager = (() => {
 })()
 
 const playGame = (() => {
-  //  let player;
-    let isWin = false;
     displayController.toggleModal();
-   // let opponents;
+
+    displayController.resetGame(board.currentBoard());
+    console.log(board.currentBoard());
+    
     let _termNum = 1;
 
     let currentTurnNum = () => {
@@ -278,6 +287,7 @@ const playGame = (() => {
         displayController.formData();
         opponents = usersModel.players();
         addTurnToBoard();   
+        
     })
 
     function addTurnToBoard() {
@@ -286,10 +296,8 @@ const playGame = (() => {
         for (let i = 0; i < spots.length; i++){
             spots[i].addEventListener("click",turnPlay, once);
         }
-            
-         
     }
-    let once = {once: true};
+    const once = {once: true};
     let turnPlay =    function logTurn(e) {
             let isEmptycell  = displayController.getCell(e);
             if (isEmptycell){
@@ -300,7 +308,6 @@ const playGame = (() => {
                 }
             }
         _termNum++;
-        console.log({_termNum})
         }
     
     
@@ -309,7 +316,6 @@ const playGame = (() => {
         let endGame = gameManager.findWin(currentBoard);
  
         if(!endGame) {
-            console.log('no win')
             console.log(gameManager.currentTurn(_termNum));
            addTurnToBoard(); 
         }
@@ -318,6 +324,7 @@ const playGame = (() => {
             return;
         }
     } 
+
     return{
         currentTurnNum,
         turnPlay, 
