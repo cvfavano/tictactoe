@@ -101,8 +101,10 @@ const displayController = (() => {
     const clearDisplay = () => {
         const spots = [...document.querySelectorAll('.box')];
         spots.forEach(spot => { 
-             const divID = `#${spot.id}`;
-                document.querySelector(divID).textContent ='';
+            const divID = document.querySelector(`#${spot.id}`);
+              
+            divID.style.color = null;
+            divID.textContent ='';
         })
     }
 
@@ -200,6 +202,8 @@ const displayController = (() => {
         console.log({formPlayers})
         button.addEventListener('click', (e) => {
           board.clearBoard();
+          //ALSO CLEAR GREEN STYLING
+          //CLEAR FORM PLAYERS
           clearDisplay();
             // [...formPlayers].forEach((player) => {
             //     player ='';
@@ -219,7 +223,7 @@ const displayController = (() => {
 
 const gameManager = (() => {
     let _currentPlayer;
-    
+    //fix turn at reset
     let changeTurn = (termNum ) => {
         const users = usersModel.players();
 
@@ -278,7 +282,7 @@ const gameManager = (() => {
 const playGame = (() => {
     displayController.toggleModal();
 
-    displayController.resetGame(board.currentBoard());
+    displayController.resetGame();
     
     let _termNum = 1;
 
