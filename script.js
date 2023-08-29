@@ -84,11 +84,7 @@ const displayController = (() => {
         const spots = document.getElementsByClassName('box');
 
         for (let i = 0; i < spots.length; i++){
-            spots[i].removeEventListener("click",(e) => {
-                logTurn(e) ;
-            }, {
-                once:true
-            })
+            spots[i].removeEventListener("click",playGame.turnPlay, playGame.once);
             
         }
     }
@@ -281,21 +277,21 @@ const playGame = (() => {
     
         displayController.formData();
         opponents = usersModel.players();
-        addTurntoBoard();   
+        addTurnToBoard();   
     })
 
-    function addTurntoBoard() {
+    function addTurnToBoard() {
         const spots = document.getElementsByClassName('box');
 
         for (let i = 0; i < spots.length; i++){
-            spots[i].addEventListener("click",(e) => {
-                logTurn(e) 
-            },
-            {once: true})
-        } 
+            spots[i].addEventListener("click",turnPlay, once);
+        }
+            
+         
     }
-        function logTurn(e) {
-            let isEmptycell  =displayController.getCell(e);
+    let once = {once: true};
+    let turnPlay =    function logTurn(e) {
+            let isEmptycell  = displayController.getCell(e);
             if (isEmptycell){
                 displayController.updateDisplay(e);
 
@@ -315,7 +311,7 @@ const playGame = (() => {
         if(!endGame) {
             console.log('no win')
             console.log(gameManager.currentTurn(_termNum));
-           addTurntoBoard(); //logs twice (?)
+           addTurnToBoard(); 
         }
         else{ 
             displayController.stopUpdate();
@@ -323,6 +319,8 @@ const playGame = (() => {
         }
     } 
     return{
-        currentTurnNum
+        currentTurnNum,
+        turnPlay, 
+        once
     }
 })()  
