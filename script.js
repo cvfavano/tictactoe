@@ -209,7 +209,26 @@ const displayController = (() => {
             //     player ='';
             // });
         })
-    }
+        }
+        function showPlayAgainBtn() {
+             document.querySelector('.playAgainBtn').style.display = 'inline';
+        }
+
+        function playAgain() {
+            //dont reset players
+            const button = document.querySelector('.playAgainBtn');
+            button.addEventListener('click', (e) => {
+                
+                console.log({players:usersModel.players()});
+
+                board.clearBoard();
+          //ALSO CLEAR GREEN STYLING
+          //CLEAR FORM PLAYERS
+          clearDisplay();
+          playGame.addTurnToBoard();   
+            })
+        }
+    
     return{
        updateDisplay,
        stopUpdate,
@@ -217,7 +236,9 @@ const displayController = (() => {
        formData, 
        toggleModal,
        getCell,
-       resetGame
+       resetGame,
+       showPlayAgainBtn,
+       playAgain
     }
 })()
 
@@ -317,7 +338,7 @@ const playGame = (() => {
                 }
             }
         _termNum++;
-        console.log({_termNum})
+    
         }
     
     
@@ -329,8 +350,10 @@ const playGame = (() => {
            addTurnToBoard(); 
         }
         else{ 
+            displayController.showPlayAgainBtn();
             displayController.stopUpdate();
             //set termNum back to x, will be set to 0 after incremented in turnPlay()
+            displayController.playAgain();
             _termNum = 0;
             return;
         }
@@ -339,6 +362,7 @@ const playGame = (() => {
     return{
         currentTurnNum,
         turnPlay, 
-        once
+        once,
+        addTurnToBoard
     }
 })()  

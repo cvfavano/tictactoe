@@ -73,3 +73,7 @@ span.invalid-player2 {
 .invalid {
     color: red;
 }
+
+.playAgainBtn {
+    display: none;
+}
