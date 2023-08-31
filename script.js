@@ -208,37 +208,47 @@ const displayController = (() => {
             // [...formPlayers].forEach((player) => {
             //     player ='';
             // });
+            toggleButton('button.playAgainBtn');
+            toggleButton('button.add-player');
         })
         }
-        function showPlayAgainBtn() {
-             document.querySelector('.playAgainBtn').style.display = 'inline';
-        }
+      
 
         function playAgain() {
-            //dont reset players
+            //does not reset players
             const button = document.querySelector('.playAgainBtn');
             button.addEventListener('click', (e) => {
                 
                 console.log({players:usersModel.players()});
-
+                toggleButton('button.playAgainBtn');
                 board.clearBoard();
-          //ALSO CLEAR GREEN STYLING
-          //CLEAR FORM PLAYERS
-          clearDisplay();
-          playGame.addTurnToBoard();   
+                clearDisplay();
+                playGame.addTurnToBoard();   
             })
         }
-    
-    return{
-       updateDisplay,
-       stopUpdate,
-       changeColor,
-       formData, 
-       toggleModal,
-       getCell,
-       resetGame,
-       showPlayAgainBtn,
-       playAgain
+
+        function toggleButton(button) {
+  
+            const  btn = document.querySelector(button);
+           
+            if(window.getComputedStyle(btn, null).display== 'inline'  ||window.getComputedStyle(btn, null).display == 'inline-block') {
+                btn.style.display = 'none';
+            }
+
+            else {
+                btn.style.display ='inline';
+            }
+        }
+        return{
+            updateDisplay,
+            stopUpdate,
+            changeColor,
+            formData, 
+            toggleModal,
+            getCell,
+            resetGame,
+            playAgain,
+            toggleButton
     }
 })()
 
@@ -316,6 +326,7 @@ const playGame = (() => {
     
         displayController.formData();
         opponents = usersModel.players();
+        displayController.toggleButton('button.add-player');
         addTurnToBoard();   
         
     })
@@ -350,7 +361,7 @@ const playGame = (() => {
            addTurnToBoard(); 
         }
         else{ 
-            displayController.showPlayAgainBtn();
+            displayController.toggleButton('button.playAgainBtn');
             displayController.stopUpdate();
             //set termNum back to x, will be set to 0 after incremented in turnPlay()
             displayController.playAgain();

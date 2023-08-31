@@ -77,3 +77,7 @@ span.invalid-player2 {
 .playAgainBtn {
     display: none;
 }
+
+.add-player {
+    display: inline;
+}
