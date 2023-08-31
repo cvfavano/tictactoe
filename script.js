@@ -13,6 +13,11 @@ const usersModel = (() => {
             return _p2;
         }
     }
+    let playerReset = () => {
+        _p1 = undefined;
+        _p2 = undefined;
+        
+    }
 
     let players = () =>
     {
@@ -22,7 +27,8 @@ const usersModel = (() => {
     }
     return {
         playerFactory,
-        players
+        players,
+        playerReset
     }
 })()
 
@@ -192,6 +198,11 @@ const displayController = (() => {
            
         const modals = document.querySelector('#modal-container');  
         modals.style.display ='none';
+
+        document.getElementById("player1").value = '';
+        document.getElementById("player2").value = '';
+
+
     }
 
     
@@ -210,8 +221,10 @@ const displayController = (() => {
             // });
             toggleButton('button.playAgainBtn');
             toggleButton('button.add-player');
+            // toggleButton('button#reset');
+            usersModel.playerReset();
         })
-        }
+    }
       
 
         function playAgain() {
@@ -328,6 +341,7 @@ const playGame = (() => {
         opponents = usersModel.players();
         displayController.toggleButton('button.add-player');
         addTurnToBoard();   
+        console.log({opponents})
         
     })
 
