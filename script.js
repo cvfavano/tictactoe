@@ -285,7 +285,6 @@ const playGame = (() => {
     displayController.resetGame();
     
     let _termNum = 1;
-
     let currentTurnNum = () => {
         return _termNum
     }
@@ -318,6 +317,7 @@ const playGame = (() => {
                 }
             }
         _termNum++;
+        console.log({_termNum})
         }
     
     
@@ -330,6 +330,8 @@ const playGame = (() => {
         }
         else{ 
             displayController.stopUpdate();
+            //set termNum back to x, will be set to 0 after incremented in turnPlay()
+            _termNum = 0;
             return;
         }
     } 
