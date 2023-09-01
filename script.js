@@ -210,58 +210,54 @@ const displayController = (() => {
     function resetGame() {
         const button = document.querySelector('#reset');
         let formPlayers = document.querySelectorAll('#form input');
-        console.log({formPlayers})
-        button.addEventListener('click', (e) => {
-          board.clearBoard();
-          //ALSO CLEAR GREEN STYLING
-          //CLEAR FORM PLAYERS
-          clearDisplay();
-            // [...formPlayers].forEach((player) => {
-            //     player ='';
-            // });
+        // console.log({formPlayers})
+        button.addEventListener('click', () => {
+            board.clearBoard();
+            clearDisplay();
+            
             toggleButton('button.playAgainBtn');
             toggleButton('button.add-player');
-            // toggleButton('button#reset');
+            toggleButton('button#reset');
             usersModel.playerReset();
         })
     }
       
 
-        function playAgain() {
-            //does not reset players
-            const button = document.querySelector('.playAgainBtn');
-            button.addEventListener('click', (e) => {
-                
-                console.log({players:usersModel.players()});
-                toggleButton('button.playAgainBtn');
-                board.clearBoard();
-                clearDisplay();
-                playGame.addTurnToBoard();   
-            })
+    function playAgain() {
+        //does not reset players
+        const button = document.querySelector('.playAgainBtn');
+        button.addEventListener('click', (e) => {
+            
+            // console.log({players:usersModel.players()});
+            toggleButton('button.playAgainBtn');
+            board.clearBoard();
+            clearDisplay();
+            playGame.addTurnToBoard();   
+        })
+    }
+
+    function toggleButton(button) {
+
+        const  btn = document.querySelector(button);
+        
+        if(window.getComputedStyle(btn, null).display== 'inline'  ||window.getComputedStyle(btn, null).display == 'inline-block') {
+            btn.style.display = 'none';
         }
 
-        function toggleButton(button) {
-  
-            const  btn = document.querySelector(button);
-           
-            if(window.getComputedStyle(btn, null).display== 'inline'  ||window.getComputedStyle(btn, null).display == 'inline-block') {
-                btn.style.display = 'none';
-            }
-
-            else {
-                btn.style.display ='inline';
-            }
+        else {
+            btn.style.display ='inline';
         }
-        return{
-            updateDisplay,
-            stopUpdate,
-            changeColor,
-            formData, 
-            toggleModal,
-            getCell,
-            resetGame,
-            playAgain,
-            toggleButton
+    }
+    return{
+        updateDisplay,
+        stopUpdate,
+        changeColor,
+        formData, 
+        toggleModal,
+        getCell,
+        resetGame,
+        playAgain,
+        toggleButton
     }
 })()
 
@@ -325,6 +321,7 @@ const gameManager = (() => {
 
 const playGame = (() => {
     displayController.toggleModal();
+    displayController.toggleButton('button#reset');
 
     displayController.resetGame();
     
@@ -340,8 +337,9 @@ const playGame = (() => {
         displayController.formData();
         opponents = usersModel.players();
         displayController.toggleButton('button.add-player');
+        displayController.toggleButton('button#reset');
         addTurnToBoard();   
-        console.log({opponents})
+        // console.log({opponents})
         
     })
 
