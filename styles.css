@@ -1,11 +1,12 @@
 body {
-    font-family: sans-serif;
+    font-family:'Roboto', sans-serif;
+    font-size: 16px;
 }
 
 .board-container {
     display: grid;
     max-width: 470px;
-    margin: 20px auto;
+    margin: 5% auto;
     grid-gap: 10px;
     grid-template-columns: repeat(3, 150px);
     grid-template-rows: repeat(3, 150px);
@@ -16,7 +17,9 @@ body {
 .board-container > div.box {
     background: #fff;
     text-align: center;
-    font-size: 100px;
+    font-size: 1.05em;
+    font-family: 'roboto', sans-serif;
+    
 }
 
 #modal-container {
@@ -31,21 +34,23 @@ span.invalid-player2 {
 
 
 
-.exit-button{
+.close-container{
     color: #000;
-    float: right;
+  
     font-size: 28px;
-    font-weight: bold;
+    width:100%;
+}
+.close-btn {
+    float: right;
 }
 
-.exit-button:hover,
-.close:focus{
+.close-btn:hover,
+.close-btn:focus{
     color: #000;
     text-decoration: none;
-    cursor: pointer;
 }
 
-#form-modal{
+.modal{
     display: none;
     position: fixed;
     z-index: 1;
@@ -60,14 +65,15 @@ span.invalid-player2 {
 .modal-content{
     background: #fefefe;
     margin: 15% auto;
-    padding: 20px;
+    padding: 10px 20px 20px;
     border: 1px solid #888;
     width: 300px;
+    
 }
 
 .modal-content input {
     margin-bottom: 30px;
-    width: 250px;
+    width: 93%;
 }
 
 .invalid {
@@ -80,4 +86,17 @@ span.invalid-player2 {
 
 .add-player {
     display: inline;
+}
+
+form {
+    margin-top: 35px;
+}
+
+button {
+    border-radius: 12px;
+    padding: 3px 10px;
+    border-style: none;
+    border: 1px solid #666;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
 }

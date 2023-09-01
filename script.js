@@ -167,7 +167,7 @@ const displayController = (() => {
     function toggleModal ()     {
         const modal = document.querySelector('#modal-container');
         const button = document.querySelector('.add-player');
-        const exitButton = document.querySelector('.close');
+        const exitButton = document.querySelector('.close-btn');
 
         button.addEventListener('click', () => {
             modal.style.display = 'block';

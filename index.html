@@ -7,11 +7,14 @@
 
     <title>Tic Tac Toe Game</title>
     <link rel="stylesheet" href="styles.css"></link>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="header-container">
-        <button class="add-player">Add Player</button>
+        <button class="add-player">Start Game</button>
         <button type="reset" id="reset">Reset</button>
         <button type="button" class="playAgainBtn">Play Again</button>
         <!-- Trigger/Open The Modal -->
@@ -22,15 +25,17 @@
 
          <!-- Modal content -->
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <div class = "close-container">
+                <span class="close-btn">&times;</span>
+                </div>
                 <form id="form" method="post">
-                    <label for ="player1">Player1: <span class="invalid-player1 invalid">Please enter name</span></label>
+                    <label for ="player1">Player 1: <span class="invalid-player1 invalid">Please enter name</span></label>
                     <input type="text" id ="player1" name="player1" required></input>
 
-                    <label for ="player2">player2: <span class="invalid-player2 invalid">Please enter name</span></label>
+                    <label for ="player2">Player 2: <span class="invalid-player2 invalid">Please enter name</span></label>
                     <input type="text" id="player2" name="player2" ></input>
 
-                    <button type="button" id="submit-button">submit</button>
+                    <button type="button" id="submit-button">Submit</button>
                 </form>
             </div>
         </div>
