@@ -217,7 +217,7 @@ const displayController = (() => {
             
             toggleButton('button.playAgainBtn');
             toggleButton('button.add-player');
-            toggleButton('button#reset');
+            document.querySelector('button#reset').style.display = 'none';
             usersModel.playerReset();
         })
     }
