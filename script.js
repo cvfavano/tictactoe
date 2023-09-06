@@ -40,7 +40,7 @@ const usersModel = (() => {
         ['02','11','20'], //diagonal
         ['00','10','20'], //vertical
         ['01','11','21'], //vertical
-        ['02','21','12' ] //vertical
+        ['02','12','22' ] //vertical
 ]
 const board = (() => {
     let _board = [[],[],[]];
